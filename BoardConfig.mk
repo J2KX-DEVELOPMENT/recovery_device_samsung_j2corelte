@@ -1,49 +1,56 @@
-#Bootloader 
-
-TARGET_NO_BOOTLOADER := true
-TARGET_BOOTLOADER_BOARD_NAME := universal7570_go
-
-# Platform
-
-TARGET_BOARD_PLATFORM := exynos5
-TARGET_BOARD_SOC := exynos7570
-TARGET_BOARD_PLATFORM_GPU := mali-t720
+DEVICE_PATH := device/samsung/j2corelte
 
 # Architecture
-
 TARGET_ARCH := arm
-TARGET_ARCH_VARIANT := armv7-a-neon
+TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_CPU_VARIANT := cortex-a53
 TARGET_CPU_CORTEX_A53 := true
 TARGET_CPU_SMP := true
+
+# Additional arch
 TARGET_USES_64_BIT_BINDER := true
 ARCH_ARM_HAVE_NEON := true
 
-#Kernel
+# Platform
+TARGET_BOARD_PLATFORM := exynos5
+TARGET_BOARD_SOC := exynos7570
+TARGET_BOARD_PLATFORM_GPU := mali-t720
+BOARD_VENDOR := samsung
+
+# Bootloader 
+TARGET_NO_BOOTLOADER := true
+TARGET_BOOTLOADER_BOARD_NAME := universal7570_go
+
+# Kernel
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_HEADER_ARCH := arm64
-TARGET_USES_64_BIT_BINDER := true
-TARGET_PREBUILT_KERNEL := device/samsung/j2corelte/prebuilt/Image
-TARGET_PREBUILT_DTB := device/samsung/j2corelte/prebuilt/dt.img
 
-# Building kernel from source
-#TARGET_KERNEL_CONFIG := j2corelte_01_defconfig
-#TARGET_KERNEL_SOURCE := kernel/samsung/j2corelte
-#TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
-#KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
-#CROSS_COMPILE := $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
-
-#BOOT image 
-BOARD_CUSTOM_BOOTIMG_MK :=  device/samsung/j2corelte/bootimg.mk
-BOARD_KERNEL_IMAGE_NAME := Image
-BOARD_KERNEL_SEPARATED_DT := true
+BOARD_CUSTOM_BOOTIMG_MK :=  $(DEVICE_PATH)/mkbootimg.mk
 BOARD_KERNEL_CMDLINE := # Exynos doesn't take cmdline arguments from boot image
+BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_KERNEL_PAGESIZE := 2048
+BOARD_KERNEL_OFFSET := 0x00008000
+BOARD_RAMDISK_OFFSET := 0x01000000
+BOARD_SECOND_OFFSET := 0x00f00000
+BOARD_TAGS_OFFSET := 0x00000100
+
+BOARD_MKBOOTIMG_ARGS := --base $(BOARD_KERNEL_BASE)
+BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
+BOARD_MKBOOTIMG_ARGS += --kernel_offset $(BOARD_KERNEL_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --second_offset $(BOARD_RECOVERY_SECOND_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_TAGS_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
+
 # 000RU = recovery kernel, 000KU = system kernel
-BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00008000 --ramdisk_offset 0x01000000 --tags_offset 0x00000100 --board SRPRF18A001RU
+BOARD_MKBOOTIMG_ARGS += --board "SRPRF18A007RU"
+
+BOARD_KERNEL_SEPARATED_DT := true
+TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/Image
+TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dt.img
 
 # Partitions
 BOARD_BOOTIMAGE_PARTITION_SIZE := 33554432
@@ -54,9 +61,9 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 5905580032
 BOARD_VENDORIMAGE_PARTITION_SIZE := 184549376
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4  
 BOARD_FLASH_BLOCK_SIZE := 131072
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery.fstab
 
-# File System
-# Use this flag if the board has a ext4 partition larger than 2gb
+# Filesystem
 BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
@@ -67,24 +74,22 @@ TARGET_COPY_OUT_VENDOR := vendor
 
 # TWRP specific build flags
 TW_THEME := portrait_mdpi
-RECOVERY_SDCARD_ON_DATA := true
 TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
-#BOARD_HAS_NO_REAL_SDCARD := true
+RECOVERY_GRAPHICS_FORCE_USE_LINELENGTH := true
+RECOVERY_SDCARD_ON_DATA := true
 TW_BRIGHTNESS_PATH := "/sys/devices/14800000.dsim/backlight/panel/brightness"
 TW_MAX_BRIGHTNESS := 255
 TW_DEFAULT_BRIGHTNESS := 162
 TW_NO_REBOOT_BOOTLOADER := true
 TW_HAS_DOWNLOAD_MODE := true
 TW_INCLUDE_NTFS_3G := true
-#TW_USE_NEW_MINADBD := true
 
 # Encryption support
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_CRYPTO_SAMSUNG := true
-#TARGET_HW_DISK_ENCRYPTION := true
 
 # Debug flags
 #TWRP_EVENT_LOGGING := true
 #TW_NEVER_UNMOUNT_SYSTEM := true
-#TARGET_USES_LOGD := true
-#TWRP_INCLUDE_LOGCAT := true
+TARGET_USES_LOGD := true
+TWRP_INCLUDE_LOGCAT := true

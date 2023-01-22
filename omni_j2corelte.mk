@@ -15,8 +15,7 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += \
      $(LOCAL_PATH)/prebuilt/Image:kernel \
-     $(LOCAL_PATH)/prebuilt/dt.img:dt.img \
-     $(LOCAL_PATH)/boot.img:boot.img
+     $(LOCAL_PATH)/prebuilt/dt.img:dt.img
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_NAME := omni_j2corelte
